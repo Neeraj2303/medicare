@@ -1,0 +1,33 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "medicine-dashboard-961f9",
+          "appId": "1:694058093426:android:c321a82243ad908e65ebeb",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "medicine-dashboard-961f9",
+          "configurations": {
+            "android": "1:694058093426:android:c321a82243ad908e65ebeb",
+            "ios": "1:694058093426:ios:6465798bba21180a65ebeb",
+            "macos": "1:694058093426:ios:6465798bba21180a65ebeb",
+            "web": "1:694058093426:web:b9907208650c82bd65ebeb",
+            "windows": "1:694058093426:web:a32ad8bf6bbc62a065ebeb"
+          }
+        }
+      }
+    }
+  },
+  "hosting": {
+    "public": "public",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
+  }
+}
