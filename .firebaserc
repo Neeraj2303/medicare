@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "medicine-dashboard-961f9"
-  }
+    "default": "medicine-dashboard-961f9",
+    "dashboard": "medicine-dashboard-961f9"
+  },
+  "targets": {},
+  "etags": {}
 }

@@ -60,6 +60,10 @@ class _CaretakerPageState extends State<CaretakerPage> {
       return;
     }
 
+    final command = medicationController.text.toLowerCase().contains("2")
+        ? "med2"
+        : "med1";
+
     await FirebaseFirestore.instance.collection('medication_logs').add({
       'medication': medicationController.text,
       'dosage': dosageController.text,
@@ -67,6 +71,11 @@ class _CaretakerPageState extends State<CaretakerPage> {
       'time': timeController.text,
       'taken': null,
     });
+
+    await FirebaseFirestore.instance
+        .collection('hardware_control')
+        .doc('dispenser')
+        .set({'command': command});
 
     medicationController.clear();
     dosageController.clear();
