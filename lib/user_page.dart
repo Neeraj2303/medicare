@@ -28,7 +28,7 @@ class _UserPageState extends State<UserPage> {
     await FirebaseFirestore.instance.collection('emergencies').add({
       'timestamp': Timestamp.now(),
       'message': 'Emergency button pressed',
-      'user': FirebaseAuth.instance.currentUser?.uid ?? 'unknown',
+      'user': FirebaseAuth.instance.currentUser?.uid,
     });
 
     if (mounted) {
@@ -38,19 +38,26 @@ class _UserPageState extends State<UserPage> {
     }
   }
 
+  Future<void> _sendCommand(String command) async {
+    await FirebaseFirestore.instance
+        .collection('commands')
+        .doc('dispenser')
+        .set({'command': command});
+    if (mounted) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Command "$command" sent')));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Elder Dashboard")),
+      appBar: AppBar(title: const Text("User Page")),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            Text(
-              "Today's Medications",
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-            const SizedBox(height: 12),
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
@@ -103,43 +110,30 @@ class _UserPageState extends State<UserPage> {
                               if (taken == null)
                                 Row(
                                   children: [
-                                    ElevatedButton.icon(
+                                    ElevatedButton(
                                       onPressed: () => _markTaken(doc),
-                                      icon: const Icon(Icons.check),
-                                      label: const Text("Taken"),
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.green,
                                       ),
+                                      child: const Text("Taken"),
                                     ),
-                                    const SizedBox(width: 12),
-                                    ElevatedButton.icon(
+                                    const SizedBox(width: 8),
+                                    ElevatedButton(
                                       onPressed: () => _markMissed(doc),
-                                      icon: const Icon(Icons.close),
-                                      label: const Text("Missed"),
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.red,
                                       ),
+                                      child: const Text("Missed"),
                                     ),
                                   ],
                                 )
                               else
-                                Row(
-                                  children: [
-                                    Icon(
-                                      taken ? Icons.check_circle : Icons.cancel,
-                                      color: taken ? Colors.green : Colors.red,
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      "Status: ${taken ? 'Taken' : 'Missed'}",
-                                      style: TextStyle(
-                                        color: taken
-                                            ? Colors.green
-                                            : Colors.red,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
+                                Text(
+                                  "Status: ${taken ? 'Taken' : 'Missed'}",
+                                  style: TextStyle(
+                                    color: taken ? Colors.green : Colors.red,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                             ],
                           ),
@@ -151,12 +145,42 @@ class _UserPageState extends State<UserPage> {
               ),
             ),
             const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton.icon(
+                  onPressed: () => _sendCommand("med1"),
+                  icon: const Icon(Icons.local_pharmacy),
+                  label: const Text("Dispense Med 1"),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blueAccent,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                  ),
+                ),
+                ElevatedButton.icon(
+                  onPressed: () => _sendCommand("med2"),
+                  icon: const Icon(Icons.local_pharmacy),
+                  label: const Text("Dispense Med 2"),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.teal,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
             ElevatedButton.icon(
               onPressed: _handleEmergency,
               icon: const Icon(Icons.warning, color: Colors.white),
               label: const Text(
                 'Emergency',
-                style: TextStyle(color: Colors.white, fontSize: 16),
+                style: TextStyle(color: Colors.white),
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
